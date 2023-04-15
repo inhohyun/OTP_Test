@@ -1,6 +1,8 @@
+package com.ihh.otp_test
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
@@ -17,12 +19,13 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class MainActivity : AppCompatActivity() {
 
     private val mHandler = Handler(Looper.getMainLooper())
-    private val generateOtpButton : Button = findViewById(R.id.generate_otp_button)
-    private val otpKeyEditText : EditText = findViewById(R.id.otp_key_edit_text)
-    private val otpCodeTextView : TextView = findViewById(R.id.otp_code_text_view)
+//    private val generateOtpButton : Button = findViewById(R.id.generate_otp_button)
+//    private val otpKeyEditText : EditText = findViewById(R.id.otp_key_edit_text)
+//    private val otpCodeTextView : TextView = findViewById(R.id.otp_code_text_view)
 
     lateinit var binding: ActivityMainBinding
 
@@ -34,10 +37,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-
-        generateOtpButton.setOnClickListener {
-            val otpKey = otpKeyEditText.text.toString()
+        //버튼 클릭시
+        binding.generateOtpButton.setOnClickListener {
+            val otpKey = binding.otpKeyEditText.text.toString()
             generateOtp(otpKey)
+            Log.d("generateBtn","success")
         }
 
 
@@ -45,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun generateOtp(otpKey: String) {
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://localhost:8000/api/")
+            .baseUrl("http://localhost:8000/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(OkHttpClient())
             .build()
@@ -57,11 +61,12 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<OtpResponse>, response: Response<OtpResponse>) {
                 if (response.isSuccessful) {
                     val otpCode = response.body()?.otp_code
-
+                    Log.d("test", otpCode.toString())
                     mHandler.post {
-                        otpCodeTextView.text = otpCode
+                        binding.otpCodeTextView.text = otpCode
                     }
                 } else {
+                    Log.d("test", "fail")
                     // Handle error case
                 }
             }
